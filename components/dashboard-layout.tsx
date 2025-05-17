@@ -50,6 +50,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { userInfo, setUserInfo } = useUserInfo();
 
   const handleLogout = () => {
@@ -117,68 +118,67 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </div>
       </div>
 
-      {/* Sidebar cho mobile */}
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden absolute top-4 left-4 z-10"
-          >
-            <Menu className="h-6 w-6" />
-            <span className="sr-only">Mở menu</span>
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="p-0 w-64">
-          <div className="flex flex-col h-full">
-            <div className="flex items-center justify-between p-4 border-b">
-              <div className="flex items-center">
-                <div className="relative w-8 h-8 mr-2">
-                  <Image
-                    src="/logo.png"
-                    alt="Logo Futa"
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-                <span className="text-lg font-bold text-futa-primary dark:text-futa-primary-dark">
-                  Futa Admin
-                </span>
-              </div>
-            </div>
-            <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={cn(
-                    pathname === item.href
-                      ? "bg-futa-primary/10 text-futa-primary dark:bg-futa-primary-dark/20 dark:text-futa-primary-dark"
-                      : "text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700",
-                    "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
-                  )}
-                >
-                  <item.icon
-                    className={cn(
-                      pathname === item.href
-                        ? "text-futa-primary dark:text-futa-primary-dark"
-                        : "text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300",
-                      "mr-3 flex-shrink-0 h-5 w-5"
-                    )}
-                    aria-hidden="true"
-                  />
-                  {item.name}
-                </Link>
-              ))}
-            </nav>
-          </div>
-        </SheetContent>
-      </Sheet>
-
       {/* Nội dung chính */}
       <div className="flex flex-col flex-1 overflow-hidden">
         <header className="w-full">
           <div className="relative z-10 flex-shrink-0 h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm flex">
+            {/* Mobile menu button - Moved to header for better visibility */}
+            <div className="px-4 flex items-center md:hidden">
+              <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Menu className="h-6 w-6" />
+                    <span className="sr-only">Mở menu</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="p-0 w-64">
+                  <div className="flex flex-col h-full">
+                    <div className="flex items-center justify-between p-4 border-b">
+                      <div className="flex items-center">
+                        <div className="relative w-8 h-8 mr-2">
+                          <Image
+                            src="/logo.png"
+                            alt="Logo Futa"
+                            fill
+                            className="object-contain"
+                          />
+                        </div>
+                        <span className="text-lg font-bold text-futa-primary dark:text-futa-primary-dark">
+                          Futa Admin
+                        </span>
+                      </div>
+                    </div>
+                    <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+                      {navigation.map((item) => (
+                        <Link
+                          key={item.name}
+                          href={item.href}
+                          className={cn(
+                            pathname === item.href
+                              ? "bg-futa-primary/10 text-futa-primary dark:bg-futa-primary-dark/20 dark:text-futa-primary-dark"
+                              : "text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700",
+                            "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+                          )}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          <item.icon
+                            className={cn(
+                              pathname === item.href
+                                ? "text-futa-primary dark:text-futa-primary-dark"
+                                : "text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300",
+                              "mr-3 flex-shrink-0 h-5 w-5"
+                            )}
+                            aria-hidden="true"
+                          />
+                          {item.name}
+                        </Link>
+                      ))}
+                    </nav>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
+
             <div className="flex-1 flex justify-end px-4">
               <div className="ml-4 flex items-center md:ml-6">
                 <ThemeSwitcher />
