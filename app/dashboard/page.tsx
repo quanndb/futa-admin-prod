@@ -3,6 +3,7 @@
 import { CustomPagination } from "@/components/customPagination";
 import DashboardLayout from "@/components/dashboard-layout";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -32,6 +33,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { downloadBlobFile } from "@/lib/blobUtils";
 import { formatCurrencyVND } from "@/lib/CurrencyFormater";
 import { formatToLocalDateTimeWithTimeZone } from "@/lib/DateConverter";
 import bookingAPI from "@/services/API/bookingAPI";
@@ -40,8 +42,8 @@ import transactionAPI from "@/services/API/transactionAPI";
 import tripAPI from "@/services/API/tripAPI";
 import { WalletAction, WalletCommandStatus } from "@/services/API/walletAPI";
 import { useLoading } from "@/store/LoadingStore";
-import { useQuery } from "@tanstack/react-query";
-import { Bus, Calendar, CreditCard, DollarSign } from "lucide-react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Bus, Calendar, CreditCard, DollarSign, Sheet } from "lucide-react";
 import { useState } from "react";
 import {
   Bar,
@@ -149,6 +151,60 @@ export default function DashboardPage() {
           statuses: [WalletCommandStatus.SUCCESS],
         })
         .finally(() => setIsLoading(false));
+    },
+  });
+
+  const { mutate: exportWithdrawal } = useMutation({
+    mutationFn: () => {
+      setIsLoading(true);
+      return transactionAPI
+        .exportWithdrawal(
+          period === "monthly"
+            ? `${year}-${String(new Date().getMonth() + 1).padStart(2, "0")}-01`
+            : `${year}-01-01`,
+          period === "monthly"
+            ? `${year}-${String(new Date().getMonth() + 1).padStart(
+                2,
+                "0"
+              )}-${new Date().getDate()}`
+            : `${year}-12-31`
+        )
+        .finally(() => setIsLoading(false));
+    },
+    onSuccess: (data) => {
+      // base on month-year or year
+      const date =
+        period === "monthly"
+          ? `${year}-${String(new Date().getMonth() + 1).padStart(2, "0")}`
+          : year;
+      downloadBlobFile(data, `lich-su-rut-tien-${date}.xlsx`);
+    },
+  });
+
+  const { mutate: exportTransactionOut } = useMutation({
+    mutationFn: () => {
+      setIsLoading(true);
+      return transactionAPI
+        .exportTransactionOut(
+          period === "monthly"
+            ? `${year}-${String(new Date().getMonth() + 1).padStart(2, "0")}-01`
+            : `${year}-01-01`,
+          period === "monthly"
+            ? `${year}-${String(new Date().getMonth() + 1).padStart(
+                2,
+                "0"
+              )}-${new Date().getDate()}`
+            : `${year}-12-31`
+        )
+        .finally(() => setIsLoading(false));
+    },
+    onSuccess: (data) => {
+      // base on month-year or year
+      const date =
+        period === "monthly"
+          ? `${year}-${String(new Date().getMonth() + 1).padStart(2, "0")}`
+          : year;
+      downloadBlobFile(data, `lich-su-giao-dich-ra-${date}.xlsx`);
     },
   });
 
@@ -470,12 +526,29 @@ export default function DashboardPage() {
                       } cho năm ${year}`
                     : "Tổng quan tiền ra theo năm"}
                   <br />
-                  <Input
-                    value={keyword}
-                    onChange={(e) => setKeyword(e.target.value)}
-                    placeholder="Tìm kiếm..."
-                    className="max-w-md mt-5"
-                  />
+                  <div className="flex items-center gap-2 flex-wrap justify-between">
+                    <Input
+                      value={keyword}
+                      onChange={(e) => setKeyword(e.target.value)}
+                      placeholder="Tìm kiếm..."
+                      className="max-w-md"
+                    />
+                    {/* export excel */}
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Button
+                        className="max-w-md"
+                        onClick={() => exportTransactionOut()}
+                      >
+                        <Sheet className="w-4 h-4" /> Xuất lịch sử tiền ra
+                      </Button>
+                      <Button
+                        className="max-w-md"
+                        onClick={() => exportWithdrawal()}
+                      >
+                        <Sheet className="w-4 h-4" /> Xuất lịch sử rút tiền
+                      </Button>
+                    </div>
+                  </div>
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -515,14 +588,22 @@ export default function DashboardPage() {
                     ))}
                   </TableBody>
                 </Table>
-                <CustomPagination
-                  currentPage={page}
-                  totalPages={Math.ceil(
-                    (transactionsOut?.page?.total || 1) /
-                      (transactionsOut?.page?.pageSize || 10)
-                  )}
-                  onPageChange={setPage}
-                />
+                <div className="flex items-center justify-end gap-2 mt-5 border-t">
+                  <p className="text-sm w-40 text-muted-foreground text-wrap">
+                    Tổng kết quả{" "}
+                    <span className="text-futa-primary">
+                      {transactionsOut?.page?.total}
+                    </span>
+                  </p>
+                  <CustomPagination
+                    currentPage={page}
+                    totalPages={Math.ceil(
+                      (transactionsOut?.page?.total || 1) /
+                        (transactionsOut?.page?.pageSize || 10)
+                    )}
+                    onPageChange={setPage}
+                  />
+                </div>
               </CardContent>
             </Card>
           </TabsContent>

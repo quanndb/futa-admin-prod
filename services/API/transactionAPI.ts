@@ -55,6 +55,21 @@ const transactionAPI = {
     const url = "/payment/api/v1/wallet-commands/statistics";
     return axios.get(url, { params });
   },
+
+  exportTransactionOut: (startDate: string, endDate: string): Promise<Blob> => {
+    const url = "/payment/api/v1/transaction-out/export";
+    return axios.get(url, {
+      responseType: "blob",
+      params: { startDate, endDate },
+    });
+  },
+  exportWithdrawal: (startDate: string, endDate: string): Promise<Blob> => {
+    const url = "/payment/api/v1/withdrawal/export";
+    return axios.get(url, {
+      responseType: "blob",
+      params: { startDate, endDate },
+    });
+  },
 };
 
 export default transactionAPI;
