@@ -92,19 +92,3 @@ body {
     @apply bg-background text-foreground;
   }
 }
-
-/* 1. Tắt pointer-events cho backdrop Radix */
-[data-state="open"].fixed.inset-0.bg-black\\/80 {
-  pointer-events: none !important;
-}
-
-/* 2. Giữ pointer-events cho chính Dialog content */
-[data-state="open"][role="dialog"] {
-  pointer-events: auto !important;
-}
-
-/* 3. Force pointer-events cho React-Select dropdown */
-.autocomplete__menu {
-  pointer-events: auto !important;
-  z-index: 15000 !important;
-}
