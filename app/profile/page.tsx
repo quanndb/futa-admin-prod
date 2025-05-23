@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { formatToLocalDateTimeWithTimeZone } from "@/lib/DateConverter";
+import { formatDateToLocal } from "@/lib/DateConverter";
 import { avatarEncoder } from "@/lib/LinkConverter";
 import authAPI from "@/services/API/authAPI";
 import { useState } from "react";
@@ -155,7 +155,7 @@ export default function ProfilePage() {
                   <span className="text-sm text-muted-foreground">Joined:</span>
                   <span className="text-sm font-medium">
                     {profileData.createdAt &&
-                      formatToLocalDateTimeWithTimeZone(profileData.createdAt)}
+                      formatDateToLocal(profileData.createdAt)}
                   </span>
                 </div>
               </div>

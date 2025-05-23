@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { formatCurrencyVND } from "@/lib/CurrencyFormater";
-import { BookingResponse } from "@/services/API/bookingAPI";
+import { BookingDetailsType, BookingResponse } from "@/services/API/bookingAPI";
 import { Bus, Calendar, User } from "lucide-react";
 
 export default function DetailsBookingDialog({
@@ -105,8 +105,10 @@ export default function DetailsBookingDialog({
               </CardContent>
             </Card>
           </div>
-          <TripCard data={data} title="Lượt đi" />
-          {data.returnTrip && <TripCard data={data} title="Lượt về" />}
+          <TripCard data={data.departureTrip} title="Lượt đi" />
+          {data.returnTrip && (
+            <TripCard data={data.returnTrip} title="Lượt về" />
+          )}
         </div>
       </DialogContent>
     </Dialog>
@@ -117,7 +119,7 @@ const TripCard = ({
   data,
   title,
 }: {
-  data: BookingResponse;
+  data: BookingDetailsType;
   title: string;
 }) => {
   const formatDate = (dateString: string) => {
@@ -138,15 +140,14 @@ const TripCard = ({
           <div className="flex flex-col gap-2">
             <p>
               <span className="font-medium">
-                Tuyến:{" "}
-                <span className="text-futa-primary">{data.departureRoute}</span>
+                Tuyến: <span className="text-futa-primary">{data.route}</span>
               </span>
             </p>
             <p>
               <span className="font-medium">
                 Ngày khởi hành:{" "}
                 <span className="text-futa-primary">
-                  {formatDate(data.departureTime)}
+                  {formatDate(`${data.departureDate}T${data.departureTime}`)}
                 </span>
               </span>
             </p>
@@ -154,7 +155,7 @@ const TripCard = ({
               <span className="font-medium">
                 Giá vé:{" "}
                 <span className="text-futa-primary">
-                  {formatCurrencyVND(data.departureTrip.pricePerSeat)}
+                  {formatCurrencyVND(data.pricePerSeat)}
                 </span>
               </span>
             </p>
@@ -164,9 +165,7 @@ const TripCard = ({
               <span className="font-medium">
                 Ghế:{" "}
                 <span className="text-futa-primary">
-                  {data.departureTrip.tickets
-                    .map((ticket) => ticket.seatNumber)
-                    .join(", ")}
+                  {data.tickets.map((ticket) => ticket.seatNumber).join(", ")}
                 </span>
               </span>
             </p>
@@ -174,7 +173,7 @@ const TripCard = ({
               <span className="font-medium">
                 Điểm đón:{" "}
                 <span className="text-futa-primary">
-                  {data.departureTrip.departureAddress}
+                  {data.departureAddress}
                 </span>
               </span>
             </p>
@@ -182,7 +181,7 @@ const TripCard = ({
               <span className="font-medium">
                 Điểm trả:{" "}
                 <span className="text-futa-primary">
-                  {data.departureTrip.destinationAddress}
+                  {data.destinationAddress}
                 </span>
               </span>
             </p>

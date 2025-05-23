@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { formatCurrencyVND } from "@/lib/CurrencyFormater";
-import { formatToLocalDateTime } from "@/lib/DateConverter";
+import { formatDateToLocal } from "@/lib/DateConverter";
 import paymentAPI from "@/services/API/paymentAPI";
 import { WalletCommand, WalletCommandStatus } from "@/services/API/walletAPI";
 import { useLoading } from "@/store/LoadingStore";
@@ -78,7 +78,7 @@ export default function WithdrawDialog({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[700px]">
         <DialogHeader>
           <DialogTitle>Chi tiết lệnh rút tiền</DialogTitle>
           <DialogDescription>
@@ -119,8 +119,16 @@ export default function WithdrawDialog({
                     <p>
                       <span className="font-medium">Ngày yêu cầu: </span>
                       <span className="text-futa-primary">
-                        {formatToLocalDateTime(selected.createdAt)}
+                        {formatDateToLocal(selected.createdAt)}
                       </span>
+                    </p>
+                    <p>
+                      <span className="font-medium">Ngày hoàn thành: </span>
+                      {selected.completedAt && (
+                        <span className="text-futa-primary">
+                          {formatDateToLocal(selected.completedAt)}
+                        </span>
+                      )}
                     </p>
                     <div>
                       <span className="font-medium">Trạng thái: </span>

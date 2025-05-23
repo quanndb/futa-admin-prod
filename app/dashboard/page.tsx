@@ -35,7 +35,6 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { downloadBlobFile } from "@/lib/blobUtils";
 import { formatCurrencyVND } from "@/lib/CurrencyFormater";
-import { formatToLocalDateTimeWithTimeZone } from "@/lib/DateConverter";
 import bookingAPI from "@/services/API/bookingAPI";
 import { TransferType } from "@/services/API/paymentAPI";
 import transactionAPI from "@/services/API/transactionAPI";
@@ -207,6 +206,11 @@ export default function DashboardPage() {
       downloadBlobFile(data, `lich-su-giao-dich-ra-${date}.xlsx`);
     },
   });
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString();
+  };
 
   return (
     <DashboardLayout>
@@ -524,9 +528,9 @@ export default function DashboardPage() {
                     ? `Tiền ra theo tháng ${
                         new Date().getMonth() + 1
                       } cho năm ${year}`
-                    : "Tổng quan tiền ra theo năm"}
+                    : `Tổng quan tiền ra của năm ${year}`}
                   <br />
-                  <div className="flex items-center gap-2 flex-wrap justify-between">
+                  <div className="flex items-center gap-2 flex-wrap justify-between mt-2">
                     <Input
                       value={keyword}
                       onChange={(e) => setKeyword(e.target.value)}
@@ -561,7 +565,9 @@ export default function DashboardPage() {
                         Số tài khoản
                       </TableHead>
                       <TableHead className="text-center">Số tiền</TableHead>
-                      <TableHead className="text-center">Ngày</TableHead>
+                      <TableHead className="text-center">
+                        Ngày giao dịch
+                      </TableHead>
                       <TableHead className="text-center">Nội dung</TableHead>
                       <TableHead className="text-center">Mô tả</TableHead>
                       <TableHead className="text-center">Loại</TableHead>
@@ -578,9 +584,7 @@ export default function DashboardPage() {
                         <TableCell className="font-semibold text-futa-primary">
                           {formatCurrencyVND(item.transferAmount)}
                         </TableCell>
-                        <TableCell>
-                          {formatToLocalDateTimeWithTimeZone(item.createdAt)}
-                        </TableCell>
+                        <TableCell>{formatDate(item.createdAt)}</TableCell>
                         <TableCell>{item.content}</TableCell>
                         <TableCell>{item.description}</TableCell>
                         <TableCell>{getBadge(item.transferType)}</TableCell>

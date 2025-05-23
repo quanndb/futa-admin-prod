@@ -1,6 +1,7 @@
 "use client";
 
 import DetailsBookingDialog from "@/app/bookings/detail-booking-dialog";
+import { CustomPagination } from "@/components/customPagination";
 import DashboardLayout from "@/components/dashboard-layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -170,7 +171,7 @@ export default function BookingsPage() {
                   ) : (
                     bookingData?.data?.map((booking) => (
                       <TableRow key={booking.code}>
-                        <TableCell className="font-medium">
+                        <TableCell className="font-medium text-futa-primary">
                           {booking.code}
                         </TableCell>
                         <TableCell>{booking.departureTrip.fullName}</TableCell>
@@ -254,6 +255,11 @@ export default function BookingsPage() {
                 </TableBody>
               </Table>
             </div>
+            <CustomPagination
+              currentPage={page}
+              totalPages={Math.ceil((bookingData?.page?.total ?? 0) / 10)}
+              onPageChange={(page) => setPage(page)}
+            />
           </CardContent>
         </Card>
 

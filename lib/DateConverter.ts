@@ -29,3 +29,8 @@ export function formatDateToYYYYMMDD(date: Date | undefined): string {
   const day = `${date.getDate()}`.padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
+
+export const formatDateToLocal = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleString();
+};

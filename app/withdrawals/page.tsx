@@ -213,6 +213,7 @@ export default function WithdrawalsPage() {
                         <TableCell>
                           {formatDate(withdrawal.createdAt)}
                         </TableCell>
+
                         <TableCell>
                           <Badge
                             className={
