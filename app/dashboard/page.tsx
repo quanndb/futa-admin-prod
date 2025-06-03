@@ -63,6 +63,27 @@ export default function DashboardPage() {
   const [keyword, setKeyword] = useState("");
   const { setIsLoading } = useLoading();
 
+  const getDateRange = (period: string, year: number) => {
+    const today = new Date();
+    const monthIndex = today.getMonth(); // 0-based
+
+    const startDate =
+      period === "monthly"
+        ? new Date(year, monthIndex, 1)
+        : new Date(year, 0, 1);
+
+    const endDate =
+      period === "monthly"
+        ? new Date(year, monthIndex + 1, 0) // last day of month
+        : new Date(year, 11, 31);
+
+    return {
+      startDate: startDate.toISOString().slice(0, 10),
+      endDate: endDate.toISOString().slice(0, 10),
+    };
+  };
+
+  const { startDate, endDate } = getDateRange(period, Number(year));
   // Tính tổng
   const { data: bookingStatistics } = useQuery({
     queryKey: ["booking-statistics", period, year],
@@ -102,13 +123,10 @@ export default function DashboardPage() {
     queryKey: ["total-out", period, year],
     queryFn: () => {
       setIsLoading(true);
-      const month = String(new Date().getMonth() + 1).padStart(2, "0");
       return transactionAPI
         .getTransactionStatistic({
-          startDate:
-            period === "monthly" ? `${year}-${month}-01` : `${year}-01-01`,
-          endDate:
-            period === "monthly" ? `${year}-${month}-31` : `${year}-12-31`,
+          startDate,
+          endDate,
           transferTypes: [TransferType.OUT],
         })
         .finally(() => setIsLoading(false));
@@ -119,13 +137,10 @@ export default function DashboardPage() {
     queryKey: ["transactions-out", period, year, keyword, page],
     queryFn: () => {
       setIsLoading(true);
-      const month = String(new Date().getMonth() + 1).padStart(2, "0");
       return transactionAPI
         .geTransaction({
-          startDate:
-            period === "monthly" ? `${year}-${month}-01` : `${year}-01-01`,
-          endDate:
-            period === "monthly" ? `${year}-${month}-31` : `${year}-12-31`,
+          startDate,
+          endDate,
           transferTypes: [TransferType.OUT],
           pageIndex: page,
           keyword,
@@ -139,13 +154,10 @@ export default function DashboardPage() {
     queryKey: ["total-command-out", period, year],
     queryFn: () => {
       setIsLoading(true);
-      const month = String(new Date().getMonth() + 1).padStart(2, "0");
       return transactionAPI
         .getWalletCommandStatistic({
-          startDate:
-            period === "monthly" ? `${year}-${month}-01` : `${year}-01-01`,
-          endDate:
-            period === "monthly" ? `${year}-${month}-31` : `${year}-12-31`,
+          startDate,
+          endDate,
           actions: [WalletAction.WITHDRAW],
           statuses: [WalletCommandStatus.SUCCESS],
         })
