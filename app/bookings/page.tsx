@@ -137,6 +137,9 @@ export default function BookingsPage() {
                   <SelectItem value={BookingStatus.WAIT_TO_PAY}>
                     Chờ thanh toán
                   </SelectItem>
+                  <SelectItem value={BookingStatus.OUT_OF_PAY}>
+                    Hết hạn
+                  </SelectItem>
                   <SelectItem value={BookingStatus.PAYED}>
                     Đã thanh toán
                   </SelectItem>
