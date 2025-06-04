@@ -169,17 +169,7 @@ export default function DashboardPage() {
     mutationFn: () => {
       setIsLoading(true);
       return transactionAPI
-        .exportWithdrawal(
-          period === "monthly"
-            ? `${year}-${String(new Date().getMonth() + 1).padStart(2, "0")}-01`
-            : `${year}-01-01`,
-          period === "monthly"
-            ? `${year}-${String(new Date().getMonth() + 1).padStart(
-                2,
-                "0"
-              )}-${new Date().getDate()}`
-            : `${year}-12-31`
-        )
+        .exportWithdrawal(startDate, endDate)
         .finally(() => setIsLoading(false));
     },
     onSuccess: (data) => {
@@ -196,17 +186,7 @@ export default function DashboardPage() {
     mutationFn: () => {
       setIsLoading(true);
       return transactionAPI
-        .exportTransactionOut(
-          period === "monthly"
-            ? `${year}-${String(new Date().getMonth() + 1).padStart(2, "0")}-01`
-            : `${year}-01-01`,
-          period === "monthly"
-            ? `${year}-${String(new Date().getMonth() + 1).padStart(
-                2,
-                "0"
-              )}-${new Date().getDate()}`
-            : `${year}-12-31`
-        )
+        .exportTransactionOut(startDate, endDate)
         .finally(() => setIsLoading(false));
     },
     onSuccess: (data) => {
